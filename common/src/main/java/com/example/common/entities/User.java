@@ -15,6 +15,8 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Column(length = 200,nullable = false)
+    private String userName;
+    @Column(length = 200,nullable = false)
     private String name;
     @Column(nullable = false,length = 200)
     private String family;

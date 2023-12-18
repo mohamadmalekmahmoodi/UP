@@ -1,8 +1,11 @@
 package com.example.common.dtos;
 
+import com.example.common.entities.Account;
+import com.example.common.validations.GeneralValidationGroup;
 import com.example.common.validations.NotNullGroup;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +23,10 @@ public class UserDto {
         private String name;
         @NotNull(groups = NotNullGroup.class,message = "user.family.null")
         private String family;
+        @NotNull(groups = NotNullGroup.class,message = "user.nationalCode.null")
+        @Size(groups = GeneralValidationGroup.class,max = 10, message = "user.nationalCode.size")
+        private String nationalCode;
+        private List<AccountDto> account;
 
 
 }

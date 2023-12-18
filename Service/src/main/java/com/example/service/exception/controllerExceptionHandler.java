@@ -1,9 +1,12 @@
 package com.example.service.exception;
 
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
@@ -14,36 +17,50 @@ import java.util.Properties;
 
 @ControllerAdvice
 public class controllerExceptionHandler {
-    private static final String[] LOCALES = {"fa_IR","en_US"};
-    private Map<String,Properties> propertiesMap = new HashMap<>();
+    private static final String[] LOCALES = {"fa_IR", "en_US"};
+    private Map<String, Properties> propertiesMap = new HashMap<>();
+
     @PostConstruct
     public void init() throws IOException {
         for (String locale : LOCALES) {
-            Properties properties =new Properties();
-            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("exceptions_"+locale+".properties");
-            InputStreamReader in = new InputStreamReader(inputStream, "utf8");
+            Properties properties = new Properties();
+            try(InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("exceptions_" + locale + ".properties");
+            InputStreamReader in = new InputStreamReader(inputStream, "utf8");){
             properties.load(in);
-            propertiesMap.put(locale,properties);
+            propertiesMap.put(locale, properties);
         }
-
     }
+}
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public @ResponseBody ExceptionDto handle(Exception e, HttpServletRequest request){
+    public @ResponseBody ExceptionDto handle(Exception e, HttpServletRequest request) {
         String locale = request.getHeader("locale");
         Properties properties = this.propertiesMap.get(locale);
-        if (properties == null){
+        if (properties == null) {
             properties = this.propertiesMap.get("fa_IR");
         }
-        Object translate = properties.get(e.getClass().getName());
-        if (translate == null){
-             translate = properties.get(Exception.class.getName());
+        String errorKey = e.getClass().getName();
+        if (e instanceof MethodArgumentNotValidException) {
+            for (FieldError fieldError : ((MethodArgumentNotValidException) e).getBindingResult().getFieldErrors()) {
+                errorKey = fieldError.getDefaultMessage();
+            }
+            System.out.println(errorKey);
         }
-        return ExceptionDto.builder()
+
+            Object translate = properties.get(e.getClass().getName());
+            if (translate == null) {
+                translate = properties.get(Exception.class.getName());
+            }
+            if (e.getCause() != null && e.getCause() instanceof UnrecognizedPropertyException) {
+                String propertyName = ((UnrecognizedPropertyException) e.getCause()).getPropertyName();
+                translate = String.format(String.valueOf(translate), propertyName);
+            }
+                return ExceptionDto.builder()
                 .timeStamp(new Date())
                 .errorCode(444)
                 .message(String.valueOf(translate))
                 .build();
     }
+
 }
