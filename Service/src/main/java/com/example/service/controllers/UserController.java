@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 public class UserController extends AbstractController<User, UserDto, UserService> {
     @Override
-    public UserDto save(UserDto dto) {
-        return super.save(dto);
+    @PostMapping("/insert")
+    public void add(@RequestBody UserDto user){
+        service.save(adapter.convertDto(user));
     }
 }

@@ -24,7 +24,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableAsync
 
 public class ApApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(ApApplication.class, args);
     }

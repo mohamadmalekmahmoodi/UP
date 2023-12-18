@@ -1,15 +1,16 @@
 package com.example.common.entities;
 
 import jakarta.persistence.MappedSuperclass;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.util.Date;
 
 @MappedSuperclass
-@Data
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
 public class BaseEntity {
 
