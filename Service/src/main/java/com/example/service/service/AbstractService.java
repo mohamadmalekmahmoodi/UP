@@ -5,6 +5,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public class AbstractService<E,R extends JpaRepository<E,Long>> {
     @Autowired
@@ -14,12 +15,12 @@ public class AbstractService<E,R extends JpaRepository<E,Long>> {
         return repository.save(entity);
     }
 
-    public void remove(Long id){
+    public void removeById(Long id){
         this.repository.deleteById(id);
     }
 
     public E findById(Long id){
-        return repository.findById(id).orElseThrow(()->new RuntimeException("not found"));
+        return repository.findById(id).orElseThrow(()->new RuntimeException("wrong"));
     }
 
     public List<E> findAll(){

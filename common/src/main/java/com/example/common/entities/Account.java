@@ -2,15 +2,16 @@ package com.example.common.entities;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
 
-@Data
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Account extends BaseEntity{
     @Id

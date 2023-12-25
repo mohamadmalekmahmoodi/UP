@@ -1,19 +1,21 @@
 package com.example.common.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    @Column(length = 200,nullable = false)
+    private String userName;
     @Column(length = 200,nullable = false)
     private String name;
     @Column(nullable = false,length = 200)
