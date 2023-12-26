@@ -1,9 +1,12 @@
 package com.example.service.exception;
 
+import com.example.common.documents.ExceptionDocument;
+import com.example.service.service.ExceptionDocumentService;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -19,6 +22,8 @@ import java.util.Properties;
 public class controllerExceptionHandler {
     private static final String[] LOCALES = {"fa_IR", "en_US"};
     private Map<String, Properties> propertiesMap = new HashMap<>();
+    @Autowired
+    private ExceptionDocumentService exceptionDocumentService;
 
     @PostConstruct
     public void init() throws IOException {
@@ -56,6 +61,12 @@ public class controllerExceptionHandler {
                 String propertyName = ((UnrecognizedPropertyException) e.getCause()).getPropertyName();
                 translate = String.format(String.valueOf(translate), propertyName);
             }
+
+            ExceptionDocument exceptionDocument = new ExceptionDocument();
+            exceptionDocument.setMessage("server error");
+            exceptionDocument.setCode("error.code");
+            exceptionDocumentService.save(exceptionDocument);
+
                 return ExceptionDto.builder()
                 .timeStamp(new Date())
                 .errorCode(444)
